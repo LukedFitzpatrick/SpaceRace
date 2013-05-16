@@ -30,18 +30,17 @@ var A_KEY = 65;
 var S_KEY = 83;
 var D_KEY = 68;
 
-var acceleration = 0.01;
 
 // Game objects
 var player1 = {
-    //speed: 256, // movement in pixels per second
+    acceleration: 0.01,
     xSpeed: 0,
     ySpeed: 0,
 	x: 0,
 	y: 0
 };
 var player2 = {
-    //speed: 256, // movement in pixels per second
+    acceleration: 0.01,
     xSpeed: 0,
     ySpeed: 0,
 	x: 0,
@@ -115,29 +114,61 @@ var resetTarget = function () {
 // Update game objects
 var update = function (modifier) {
     if (UP_ARROW in keysDown) { // Player1 holding up
-        player1.ySpeed -= acceleration;
+        if (player1.ySpeed > 0) {
+            player1.ySpeed = 0;
+        } else {
+            player1.ySpeed -= player1.acceleration;
+        }
 	}
 	if (DOWN_ARROW in keysDown) { // Player1 holding down
-        player1.ySpeed += acceleration;
+        if (player1.ySpeed < 0) {
+            player1.ySpeed = 0;
+        } else {
+            player1.ySpeed += player1.acceleration;
+        }
 	}
 	if (LEFT_ARROW in keysDown) { // Player1 holding left
-        player1.xSpeed -= acceleration;
+        if (player1.xSpeed > 0) {
+            player1.xSpeed = 0;
+        } else {
+            player1.xSpeed -= player1.acceleration;
+        }
 	}
 	if (RIGHT_ARROW in keysDown) { // Player1 holding right
-        player1.xSpeed += acceleration;
+        if (player1.xSpeed < 0) {
+            player1.xSpeed = 0;
+        } else {
+            player1.xSpeed += player1.acceleration;
+        }
 	}
     
     if (W_KEY in keysDown) { // Player2 holding up
-        player2.ySpeed -= acceleration;
+        if (player2.ySpeed > 0) {
+            player2.ySpeed = 0;
+        } else {
+            player2.ySpeed -= player2.acceleration;
+        }
 	}
 	if (S_KEY in keysDown) { // Player2 holding down
-        player2.ySpeed += acceleration;
+        if (player2.ySpeed < 0) {
+            player2.ySpeed = 0;
+        } else {
+            player2.ySpeed += player2.acceleration;
+        }
 	}
 	if (A_KEY in keysDown) { // Player2 holding left
-        player2.ySpeed -= acceleration;
+        if (player2.xSpeed > 0) {
+            player2.xSpeed = 0;
+        } else {
+            player2.xSpeed -= player2.acceleration;
+        }
 	}
 	if (D_KEY in keysDown) { // Player2 holding right
-        player2.ySpeed += acceleration;
+        if (player2.xSpeed < 0) {
+            player2.xSpeed = 0;
+        } else {
+            player2.xSpeed += player2.acceleration;
+        }
 	}
     
     //Apply the speed to the coordinates
@@ -169,6 +200,39 @@ var update = function (modifier) {
         resetTarget();
     }
     
+    // Player1 touching horizontal walls?
+    if (player1.y < 0) {
+        player1.y = 0;
+        player1.ySpeed = -player1.ySpeed;
+    } else if (player1.y > (canvas.height - player1Image.height)) {
+        player1.y = (canvas.height - player1Image.height);
+        player1.ySpeed = -player1.ySpeed;
+    }
+    // Player1 touching vertical walls?
+    if (player1.x < 0) {
+        player1.x = 0;
+        player1.xSpeed = -player1.xSpeed;
+    } else if (player1.x > (canvas.width - player1Image.width)) {
+        player1.x = (canvas.width - player1Image.width);
+        player1.xSpeed = -player1.xSpeed;
+    }
+    
+    // Player2 touching horizontal walls?
+    if (player2.y < 0) {
+        player2.y = 0;
+        player2.ySpeed = -player2.ySpeed;
+    } else if (player2.y > (canvas.height - player2Image.height)) {
+        player2.y = (canvas.height - player2Image.height);
+        player2.ySpeed = -player2.ySpeed;
+    }
+    // Player2 touching vertical walls?
+    if (player2.x < 0) {
+        player2.x = 0;
+        player2.xSpeed = -player2.xSpeed;
+    } else if (player2.x > (canvas.width - player2Image.width)) {
+        player2.x = (canvas.width - player2Image.width);
+        player2.xSpeed = -player2.xSpeed;
+    }
 };
 
 // Draw everything
@@ -191,7 +255,7 @@ var render = function () {
 
 	// Score
 	ctx.fillStyle = "rgb(250, 250, 250)";
-	ctx.font = "24px Helvetica";
+	ctx.font = "20px Helvetica";
 	ctx.textAlign = "left";
 	ctx.textBaseline = "top";
 	ctx.fillText("Player 1: " + player1Score + " - Player 2: " + player2Score, 32, 32);
