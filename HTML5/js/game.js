@@ -19,6 +19,30 @@ bgImage.onload = function () {
 };
 bgImage.src = "images/background.png";
 
+// Player2 image
+var player1Ready = false;
+var player1Image = new Image();
+player1Image.onload = function () {
+    player1Ready = true;
+};
+player1Image.src = "images/player1.png";
+
+// Player2 image
+var player2Ready = false;
+var player2Image = new Image();
+player2Image.onload = function () {
+    player2Ready = true;
+};
+player2Image.src = "images/player2.png";
+
+// Target image
+var targetReady = false;
+var targetImage = new Image();
+targetImage.onload = function () {
+    targetReady = true;
+};
+targetImage.src = "images/target.png";
+
 // Variables
 var LEFT_ARROW = 37;
 var UP_ARROW = 38;
@@ -30,22 +54,25 @@ var A_KEY = 65;
 var S_KEY = 83;
 var D_KEY = 68;
 
-
 // Game objects
 var player1 = {
+    image: player1Image,
     acceleration: 0.01,
     xSpeed: 0,
     ySpeed: 0,
 	x: 0,
 	y: 0
 };
+
 var player2 = {
+    image: player2Image,
     acceleration: 0.01,
     xSpeed: 0,
     ySpeed: 0,
 	x: 0,
 	y: 0
 };
+
 var target = {
     x: 0,
 	y: 0
@@ -65,29 +92,6 @@ addEventListener("keyup", function (e) {
 	delete keysDown[e.keyCode];
 }, false);
 
-// Player2 image
-var player1Ready = false;
-var player1Image = new Image();
-player1Image.onload = function () {
-    player1Ready = true;
-};
-player1Image.src = "images/player1.png";
-
-// Player2 image
-var player2Ready = false;
-var player2Image = new Image();
-player2Image.onload = function () {
-	player2Ready = true;
-};
-player2Image.src = "images/player2.png";
-
-// Target image
-var targetReady = false;
-var targetImage = new Image();
-targetImage.onload = function () {
-    targetReady = true;
-};
-targetImage.src = "images/target.png";
 
 // Reset the game
 var reset = function () {
@@ -200,40 +204,38 @@ var update = function (modifier) {
         resetTarget();
     }
     
-    // Player1 touching horizontal walls?
-    if (player1.y < 0) {
-        player1.y = 0;
-        player1.ySpeed = -player1.ySpeed;
-    } else if (player1.y > (canvas.height - player1Image.height)) {
-        player1.y = (canvas.height - player1Image.height);
-        player1.ySpeed = -player1.ySpeed;
-    }
-    // Player1 touching vertical walls?
-    if (player1.x < 0) {
-        player1.x = 0;
-        player1.xSpeed = -player1.xSpeed;
-    } else if (player1.x > (canvas.width - player1Image.width)) {
-        player1.x = (canvas.width - player1Image.width);
-        player1.xSpeed = -player1.xSpeed;
-    }
+    // Player1 touching walls?
+    horizontalWall(player1);
+    verticalWall(player1);
     
-    // Player2 touching horizontal walls?
-    if (player2.y < 0) {
-        player2.y = 0;
-        player2.ySpeed = -player2.ySpeed;
-    } else if (player2.y > (canvas.height - player2Image.height)) {
-        player2.y = (canvas.height - player2Image.height);
-        player2.ySpeed = -player2.ySpeed;
-    }
-    // Player2 touching vertical walls?
-    if (player2.x < 0) {
-        player2.x = 0;
-        player2.xSpeed = -player2.xSpeed;
-    } else if (player2.x > (canvas.width - player2Image.width)) {
-        player2.x = (canvas.width - player2Image.width);
-        player2.xSpeed = -player2.xSpeed;
-    }
+    // Player2 touching  walls?
+    horizontalWall(player2);
+    verticalWall(player2);
 };
+
+// Checks to see if there is a collision with vertical wall
+// if there is, it changes player direction
+function verticalWall (player) {
+    if (player.x < 0) {
+        player.x = 0;
+        player.xSpeed = -player.xSpeed;
+    } else if (player.x > (canvas.width - player.image.width)) {
+        player.x = (canvas.width - player.image.width);
+        player.xSpeed = -player.xSpeed;
+    }
+}
+
+// Checks to see if there is a collision with horiztonal wall
+// if there is, it changes player direction
+function horizontalWall (player) {
+    if (player.y < 0) {
+        player.y = 0;
+        player.ySpeed = -player.ySpeed;
+    } else if (player.y > (canvas.height - player.image.height)) {
+        player.y = (canvas.height - player.image.height);
+        player.ySpeed = -player.ySpeed;
+    }
+}
 
 // Draw everything
 var render = function () {
