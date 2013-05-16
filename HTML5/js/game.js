@@ -19,7 +19,7 @@ bgImage.onload = function () {
 };
 bgImage.src = "images/background.png";
 
-// Player2 image
+// Player1 image
 var player1Ready = false;
 var player1Image = new Image();
 player1Image.onload = function () {
@@ -57,18 +57,20 @@ var D_KEY = 68;
 // Game objects
 var player1 = {
     image: player1Image,
-    acceleration: 0.01,
+    acceleration: 0.02,
     xSpeed: 0,
     ySpeed: 0,
+    score: 0,
 	x: 0,
 	y: 0
 };
 
 var player2 = {
     image: player2Image,
-    acceleration: 0.01,
+    acceleration: 0.02,
     xSpeed: 0,
     ySpeed: 0,
+    score: 0,
 	x: 0,
 	y: 0
 };
@@ -77,9 +79,6 @@ var target = {
     x: 0,
 	y: 0
 };
-
-var player1Score = 0;
-var player2Score = 0;
 
 // Handle keyboard controls
 var keysDown = {};
@@ -183,39 +182,35 @@ var update = function (modifier) {
     player2.x += player2.xSpeed;
 
 	// Player1 touching target?
-	if (
-		player1.x <= (target.x + 32)
-		&& target.x <= (player1.x + 32)
-		&& player1.y <= (target.y + 32)
-		&& target.y <= (player1.y + 32)
-	) {
-		++player1Score;
-		resetTarget();
-	}
+	targetCollision(player1);
     
     // Player2 touching target?
-    if (
-        player2.x <= (target.x + 32)
-    	&& target.x <= (player2.x + 32)
-		&& player2.y <= (target.y + 32)
-		&& target.y <= (player2.y + 32)
-    ) {
-        ++player2Score;
-        resetTarget();
-    }
+    targetCollision(player2);
     
     // Player1 touching walls?
-    horizontalWall(player1);
-    verticalWall(player1);
+    horizontalWallCollision(player1);
+    verticalWallCollision(player1);
     
     // Player2 touching  walls?
-    horizontalWall(player2);
-    verticalWall(player2);
+    horizontalWallCollision(player2);
+    verticalWallCollision(player2);
 };
+
+function targetCollision (player) {
+    if (
+        player.x <= (target.x + 32)
+        && target.x <= (player.x + 32)
+		&& player.y <= (target.y + 32)
+		&& target.y <= (player.y + 32)
+    ) {
+        ++player.score;
+        resetTarget();
+    }
+}
 
 // Checks to see if there is a collision with vertical wall
 // if there is, it changes player direction
-function verticalWall (player) {
+function verticalWallCollision (player) {
     if (player.x < 0) {
         player.x = 0;
         player.xSpeed = -player.xSpeed;
@@ -227,7 +222,7 @@ function verticalWall (player) {
 
 // Checks to see if there is a collision with horiztonal wall
 // if there is, it changes player direction
-function horizontalWall (player) {
+function horizontalWallCollision (player) {
     if (player.y < 0) {
         player.y = 0;
         player.ySpeed = -player.ySpeed;
@@ -236,6 +231,8 @@ function horizontalWall (player) {
         player.ySpeed = -player.ySpeed;
     }
 }
+
+
 
 // Draw everything
 var render = function () {
@@ -260,7 +257,7 @@ var render = function () {
 	ctx.font = "20px Helvetica";
 	ctx.textAlign = "left";
 	ctx.textBaseline = "top";
-	ctx.fillText("Player 1: " + player1Score + " - Player 2: " + player2Score, 32, 32);
+	ctx.fillText("Player 1: " + player1.score + " - Player 2: " + player2.score, 32, 32);
 };
 
 // The main game loop
