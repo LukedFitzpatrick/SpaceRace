@@ -61,6 +61,20 @@ targetImage.onload = function () {
 };
 targetImage.src = "images/target.png";
 
+// Mute image
+var muteImage = new Image();
+muteImage.onload = function () {
+    muteBtnPos.ready = true;
+};
+muteImage.src = "images/mute.png";
+
+// Unmute image
+var unmuteImage = new Image();
+unmuteImage.onload = function () {
+    muteBtnPos.ready = true;
+};
+unmuteImage.src = "images/unmute.png";
+
 // Variables
 var LEFT_ARROW = 37;
 var UP_ARROW = 38;
@@ -102,18 +116,30 @@ var ACTION = {
     title: "title",
     game: "game",
     pause: "pause"
-}
+};
 
 var status = ACTION.title;
+
+var snd = new Audio("audio/title.mp3"); // buffers automatically when created
+
 
 // Button Variables
 
 var playBtnPos = {
-        x: 32,
-        y: 64,
-        width: 50,
-        height: 30
-    }
+    x: 32,
+    y: 64,
+    width: 50,
+    height: 30
+};
+
+var muteBtnPos = {
+    x: 2,
+    y: 2,
+    width: 32,
+    height: 32,
+    ready: false,
+    image: muteImage
+};
     
 // END Button Variables
 
@@ -133,6 +159,10 @@ addEventListener('mouseup', function (e){
 
     if (mouseReleased(mousePos, playBtnPos)) {
         status = ACTION.game;
+    }
+    
+    if (mouseReleased(mousePos, muteBtnPos)) {
+        toggleSound();   
     }
 }, false);
 
@@ -315,7 +345,7 @@ var render = function () {
     	}
         
         if (targetReady) {
-            ctx.drawImage(targetImage, target.x, target.y)
+            ctx.drawImage(targetImage, target.x, target.y);
         }
     
     	// Score
@@ -332,18 +362,42 @@ var render = function () {
     	ctx.textBaseline = "top";
     	ctx.fillText("Space Race", 32, 32);
         
-        ctx.beginPath();
-        ctx.rect(playBtnPos.x, playBtnPos.y, playBtnPos.width, playBtnPos.height);
-        ctx.fillStyle = 'yellow';
-        //ctx.fill();
-        ctx.lineWidth = 7;
-        ctx.strokeStyle = 'black';
-        ctx.stroke();
-        ctx.fillText("PLAY", 35, 67);
-        
-        
+        drawButtonText(ctx, playBtnPos, "yellow", "black", "Play", "white");
     }
+    
+    // Draw on top of everything else
+    drawButton(ctx, muteBtnPos);
 };
+
+function drawButtonText(ctx, buttonPos, fillColour, strokeColour, text, textColour) {
+    
+    ctx.beginPath();
+    ctx.rect(buttonPos.x, buttonPos.y, buttonPos.width, buttonPos.height);
+    ctx.fillStyle = fillColour;
+    ctx.fill();
+    ctx.lineWidth = 7;
+    ctx.strokeStyle = strokeColour;
+    ctx.stroke();
+    ctx.fillStyle = textColour;
+    ctx.fillText(text, buttonPos.x+5, buttonPos.y+3);
+}
+
+function drawButton(ctx, buttonPos) {
+    if (buttonPos.ready) {
+        ctx.drawImage(buttonPos.image, buttonPos.x, buttonPos.y);
+    }
+}
+
+function toggleSound() {
+    if (!snd.paused) {
+        snd.pause();
+        muteBtnPos.image = muteImage;
+    } else {
+        snd.loop = true;
+        snd.play();
+        muteBtnPos.image = unmuteImage;
+    }
+}
 
 // The main game loop
 var main = function () {
@@ -360,5 +414,5 @@ var main = function () {
 reset();
 var then = Date.now();
 setInterval(main, 1); // Execute as fast as possible
-var snd = new Audio("audio/title.mp3"); // buffers automatically when created
-snd.play();
+
+
