@@ -89,7 +89,7 @@ var D_KEY = 68;
 // Game objects
 var player1 = {
     image: player1Image,
-    acceleration: 0.02,
+    acceleration: 0.03,
     xSpeed: 0,
     ySpeed: 0,
     score: 0,
@@ -99,7 +99,7 @@ var player1 = {
 
 var player2 = {
     image: player2Image,
-    acceleration: 0.02,
+    acceleration: 0.03,
     xSpeed: 0,
     ySpeed: 0,
     score: 0,
@@ -217,32 +217,16 @@ var update = function (modifier) {
 	}
     
     /*if (W_KEY in keysDown) { // Player2 holding up
-        if (player2.ySpeed > 0) {
-            player2.ySpeed = 0;
-        } else {
-            player2.ySpeed -= player2.acceleration;
-        }
+        accelerateToUp(player2);
 	}
 	if (S_KEY in keysDown) { // Player2 holding down
-        if (player2.ySpeed < 0) {
-            player2.ySpeed = 0;
-        } else {
-            player2.ySpeed += player2.acceleration;
-        }
+        accelerateToDown(player2);
 	}
 	if (A_KEY in keysDown) { // Player2 holding left
-        if (player2.xSpeed > 0) {
-            player2.xSpeed = 0;
-        } else {
-            player2.xSpeed -= player2.acceleration;
-        }
+        accelerateToLeft(player2);
 	}
 	if (D_KEY in keysDown) { // Player2 holding right
-        if (player2.xSpeed < 0) {
-            player2.xSpeed = 0;
-        } else {
-            player2.xSpeed += player2.acceleration;
-        }
+        accelerateToRight(player2);
 	}*/
     
     if (Math.random() < aiDifficulty) {
@@ -355,34 +339,34 @@ function AIDirection(player, target) {
 
 function accelerateToRight(player) {
     if (player.xSpeed < 0) {
-            player.xSpeed = 0;
-        } else {
-            player.xSpeed += player.acceleration;
-        }
+        player.xSpeed = 0;
+    } else {
+        player.xSpeed += player.acceleration;
+    }
 }
 
 function accelerateToLeft(player) {
     if (player.xSpeed > 0) {
-            player.xSpeed = 0;
-        } else {
-            player.xSpeed -= player.acceleration;
-        }
+        player.xSpeed = 0;
+    } else {
+        player.xSpeed -= player.acceleration;
+    }
 }
 
 function accelerateToUp(player) {
     if (player.ySpeed > 0) {
-            player.ySpeed = 0;
-        } else {
-            player.ySpeed -= player.acceleration;
-        }
+        player.ySpeed = 0;
+    } else {
+        player.ySpeed -= player.acceleration;
+    }
 }
 
 function accelerateToDown(player) {
     if (player.ySpeed < 0) {
-            player.ySpeed = 0;
-        } else {
-            player.ySpeed += player.acceleration;
-        }
+        player.ySpeed = 0;
+    } else {
+        player.ySpeed += player.acceleration;
+    }
 }
 
 // Draw everything
