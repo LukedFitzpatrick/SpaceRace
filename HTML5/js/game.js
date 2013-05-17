@@ -108,6 +108,7 @@ var player2 = {
 };
 
 var target = {
+    image: targetImage,
     x: 0,
 	y: 0
 };
@@ -122,6 +123,12 @@ var status = ACTION.title;
 
 var snd = new Audio("audio/title.mp3"); // buffers automatically when created
 
+var direction = {
+    x: 1,
+    y: 1
+};
+
+var aiDifficulty = 0.04
 
 // Button Variables
 
@@ -197,35 +204,19 @@ var resetTarget = function () {
 // Update game objects
 var update = function (modifier) {
     if (UP_ARROW in keysDown) { // Player1 holding up
-        if (player1.ySpeed > 0) {
-            player1.ySpeed = 0;
-        } else {
-            player1.ySpeed -= player1.acceleration;
-        }
+        accelerateToUp(player1);
 	}
 	if (DOWN_ARROW in keysDown) { // Player1 holding down
-        if (player1.ySpeed < 0) {
-            player1.ySpeed = 0;
-        } else {
-            player1.ySpeed += player1.acceleration;
-        }
+        accelerateToDown(player1);
 	}
 	if (LEFT_ARROW in keysDown) { // Player1 holding left
-        if (player1.xSpeed > 0) {
-            player1.xSpeed = 0;
-        } else {
-            player1.xSpeed -= player1.acceleration;
-        }
+        accelerateToLeft(player1);
 	}
 	if (RIGHT_ARROW in keysDown) { // Player1 holding right
-        if (player1.xSpeed < 0) {
-            player1.xSpeed = 0;
-        } else {
-            player1.xSpeed += player1.acceleration;
-        }
+        accelerateToRight(player1);
 	}
     
-    if (W_KEY in keysDown) { // Player2 holding up
+    /*if (W_KEY in keysDown) { // Player2 holding up
         if (player2.ySpeed > 0) {
             player2.ySpeed = 0;
         } else {
@@ -252,7 +243,12 @@ var update = function (modifier) {
         } else {
             player2.xSpeed += player2.acceleration;
         }
-	}
+	}*/
+    
+    if (Math.random() < aiDifficulty) {
+        AIDirection(player2, target);
+    }
+    AISpeed(player2);
     
     //Apply the speed to the coordinates
     player1.y += player1.ySpeed;
@@ -278,14 +274,15 @@ var update = function (modifier) {
 
 function targetCollision (player) {
     if (
-        player.x <= (target.x + 32)
-        && target.x <= (player.x + 32)
-		&& player.y <= (target.y + 32)
-		&& target.y <= (player.y + 32)
+        player.x <= (target.x + target.image.width)
+        && target.x <= (player.x + player.image.width)
+		&& player.y <= (target.y + target.image.height)
+		&& target.y <= (player.y + player.image.height)
     ) {
         ++player.score;
         resetTarget();
     }
+        
 }
 
 // Checks to see if there is a collision with vertical wall
@@ -321,12 +318,72 @@ function placeObject (object) {
 
 // Get position of mouse
 function getMousePos(canvas, evt) {
-        var rect = canvas.getBoundingClientRect();
-        return {
-          x: evt.clientX - rect.left,
-          y: evt.clientY - rect.top
-        };
-      }
+    var rect = canvas.getBoundingClientRect();
+    return {
+      x: evt.clientX - rect.left,
+      y: evt.clientY - rect.top
+    };
+}
+
+function AISpeed(player) {
+    if (direction.x == 1) {
+        accelerateToRight(player);
+    } else {
+        accelerateToLeft(player);
+    }
+    
+    if (direction.y == 1) {
+        accelerateToDown(player);
+    } else {
+        accelerateToUp(player);
+    }
+}
+
+function AIDirection(player, target) {
+    if (player.x > target.x) {
+        direction.x = 0;
+    } else {accelerateToRight(player);
+        direction.x = 1;
+    }
+    
+    if (player.y > target.y) {
+        direction.y = 0;
+    } else {
+        direction.y = 1;
+    }
+}
+
+function accelerateToRight(player) {
+    if (player.xSpeed < 0) {
+            player.xSpeed = 0;
+        } else {
+            player.xSpeed += player.acceleration;
+        }
+}
+
+function accelerateToLeft(player) {
+    if (player.xSpeed > 0) {
+            player.xSpeed = 0;
+        } else {
+            player.xSpeed -= player.acceleration;
+        }
+}
+
+function accelerateToUp(player) {
+    if (player.ySpeed > 0) {
+            player.ySpeed = 0;
+        } else {
+            player.ySpeed -= player.acceleration;
+        }
+}
+
+function accelerateToDown(player) {
+    if (player.ySpeed < 0) {
+            player.ySpeed = 0;
+        } else {
+            player.ySpeed += player.acceleration;
+        }
+}
 
 // Draw everything
 var render = function () {
@@ -337,15 +394,15 @@ var render = function () {
     if (status == ACTION.game) {
         // Game
         if (player1Ready) {
-    		ctx.drawImage(player1Image, player1.x, player1.y);
+    		ctx.drawImage(player1.image, player1.x, player1.y);
     	}
     
     	if (player2Ready) {
-    		ctx.drawImage(player2Image, player2.x, player2.y);
+    		ctx.drawImage(player2.image, player2.x, player2.y);
     	}
         
         if (targetReady) {
-            ctx.drawImage(targetImage, target.x, target.y);
+            ctx.drawImage(target.image, target.x, target.y);
         }
     
     	// Score
