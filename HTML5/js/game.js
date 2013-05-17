@@ -370,7 +370,6 @@ var render = function () {
 };
 
 function drawButtonText(ctx, buttonPos, fillColour, strokeColour, text, textColour) {
-    
     ctx.beginPath();
     ctx.rect(buttonPos.x, buttonPos.y, buttonPos.width, buttonPos.height);
     ctx.fillStyle = fillColour;
