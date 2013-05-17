@@ -134,7 +134,6 @@ addEventListener('mouseup', function (e){
     if (mouseReleased(mousePos, playBtnPos)) {
         status = ACTION.game;
     }
-    
 }, false);
 
 function mouseReleased(mousePos, buttonPos) {
@@ -336,7 +335,7 @@ var render = function () {
         ctx.beginPath();
         ctx.rect(playBtnPos.x, playBtnPos.y, playBtnPos.width, playBtnPos.height);
         ctx.fillStyle = 'yellow';
-        ctx.fill();
+        //ctx.fill();
         ctx.lineWidth = 7;
         ctx.strokeStyle = 'black';
         ctx.stroke();
@@ -361,3 +360,5 @@ var main = function () {
 reset();
 var then = Date.now();
 setInterval(main, 1); // Execute as fast as possible
+var snd = new Audio("audio/title.mp3"); // buffers automatically when created
+snd.play();
