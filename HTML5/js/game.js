@@ -4,11 +4,29 @@
 // * 16/05/2013 - v0.1
 // * * * * * * * * * * *
 
+var myWidth = 0, myHeight = 0;
+  if( typeof( window.innerWidth ) == 'number' ) {
+    //Non-IE
+    myWidth = window.innerWidth;
+    myHeight = window.innerHeight;
+  } else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
+    //IE 6+ in 'standards compliant mode'
+    myWidth = document.documentElement.clientWidth;
+    myHeight = document.documentElement.clientHeight;
+  } else if( document.body && ( document.body.clientWidth || document.body.clientHeight ) ) {
+    //IE 4 compatible
+    myWidth = document.body.clientWidth;
+    myHeight = document.body.clientHeight;
+  }
+ 
+myHeight -= 5;
+myWidth -= 5;
+
 // Create the canvas
 var canvas = document.createElement("canvas");
 var ctx = canvas.getContext("2d");
-canvas.width = 512;
-canvas.height = 480;
+canvas.width = myWidth;
+canvas.height = myHeight;
 document.body.appendChild(canvas);
 
 // Background image
@@ -17,7 +35,7 @@ var bgImage = new Image();
 bgImage.onload = function () {
     bgReady = true;
 };
-bgImage.src = "images/background.png";
+bgImage.src = "images/spacebg.png";
 
 // Player1 image
 var player1Ready = false;
@@ -95,16 +113,13 @@ addEventListener("keyup", function (e) {
 // Reset the game
 var reset = function () {
     // Place player1 randomly on the screen
-    player1.x = 32 + (Math.random() * (canvas.width - 64));
-	player1.y = 32 + (Math.random() * (canvas.height - 64));
+    placeObject(player1);
     
 	// Place player2 randomly on the screen
-	player2.x = 32 + (Math.random() * (canvas.width - 64));
-	player2.y = 32 + (Math.random() * (canvas.height - 64));
+    placeObject(player2);
     
     // Place target randomly on the screen
-    target.x = 32 + (Math.random() * (canvas.width - 64));
-	target.y = 32 + (Math.random() * (canvas.height - 64));
+    placeObject(target);
 };
 
 // Reset the target position
@@ -232,14 +247,19 @@ function horizontalWallCollision (player) {
     }
 }
 
-
+// Place object randomly on the screen
+function placeObject (object) {
+    object.x = 32 + (Math.random() * (canvas.width - 64));
+    object.y = 32 + (Math.random() * (canvas.height - 64));
+    
+}
 
 // Draw everything
 var render = function () {
     if (bgReady) {
 		ctx.drawImage(bgImage, 0, 0);
 	}
-
+    
 	if (player1Ready) {
 		ctx.drawImage(player1Image, player1.x, player1.y);
 	}
