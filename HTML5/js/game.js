@@ -98,6 +98,25 @@ var target = {
 	y: 0
 };
 
+var ACTION = {
+    title: "title",
+    game: "game",
+    pause: "pause"
+}
+
+var status = ACTION.title;
+
+// Button Variables
+
+var playBtnPos = {
+        x: 32,
+        y: 64,
+        width: 50,
+        height: 30
+    }
+    
+// END Button Variables
+
 // Handle keyboard controls
 var keysDown = {};
 
@@ -109,6 +128,23 @@ addEventListener("keyup", function (e) {
 	delete keysDown[e.keyCode];
 }, false);
 
+addEventListener('mouseup', function (e){
+    var mousePos = getMousePos(canvas, e);
+
+    if (mouseReleased(mousePos, playBtnPos)) {
+        status = ACTION.game;
+    }
+    
+}, false);
+
+function mouseReleased(mousePos, buttonPos) {
+    if ((mousePos.x >= buttonPos.x && mousePos.x <= buttonPos.x + buttonPos.width) 
+    && (mousePos.y >= buttonPos.y && mousePos.y <= buttonPos.y + buttonPos.height)) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 // Reset the game
 var reset = function () {
@@ -254,30 +290,60 @@ function placeObject (object) {
     
 }
 
+// Get position of mouse
+function getMousePos(canvas, evt) {
+        var rect = canvas.getBoundingClientRect();
+        return {
+          x: evt.clientX - rect.left,
+          y: evt.clientY - rect.top
+        };
+      }
+
 // Draw everything
 var render = function () {
     if (bgReady) {
 		ctx.drawImage(bgImage, 0, 0);
 	}
     
-	if (player1Ready) {
-		ctx.drawImage(player1Image, player1.x, player1.y);
-	}
-
-	if (player2Ready) {
-		ctx.drawImage(player2Image, player2.x, player2.y);
-	}
+    if (status == ACTION.game) {
+        // Game
+        if (player1Ready) {
+    		ctx.drawImage(player1Image, player1.x, player1.y);
+    	}
     
-    if (targetReady) {
-        ctx.drawImage(targetImage, target.x, target.y)
+    	if (player2Ready) {
+    		ctx.drawImage(player2Image, player2.x, player2.y);
+    	}
+        
+        if (targetReady) {
+            ctx.drawImage(targetImage, target.x, target.y)
+        }
+    
+    	// Score
+    	ctx.fillStyle = "rgb(250, 250, 250)";
+    	ctx.font = "20px Helvetica";
+    	ctx.textAlign = "left";
+    	ctx.textBaseline = "top";
+    	ctx.fillText("Player 1: " + player1.score + " - Player 2: " + player2.score, 32, 32);
+    } else if (status == ACTION.title) {
+        // Title
+        ctx.fillStyle = "rgb(250, 250, 250)";
+    	ctx.font = "20px Helvetica";
+    	ctx.textAlign = "left";
+    	ctx.textBaseline = "top";
+    	ctx.fillText("Space Race", 32, 32);
+        
+        ctx.beginPath();
+        ctx.rect(playBtnPos.x, playBtnPos.y, playBtnPos.width, playBtnPos.height);
+        ctx.fillStyle = 'yellow';
+        ctx.fill();
+        ctx.lineWidth = 7;
+        ctx.strokeStyle = 'black';
+        ctx.stroke();
+        ctx.fillText("PLAY", 35, 67);
+        
+        
     }
-
-	// Score
-	ctx.fillStyle = "rgb(250, 250, 250)";
-	ctx.font = "20px Helvetica";
-	ctx.textAlign = "left";
-	ctx.textBaseline = "top";
-	ctx.fillText("Player 1: " + player1.score + " - Player 2: " + player2.score, 32, 32);
 };
 
 // The main game loop
