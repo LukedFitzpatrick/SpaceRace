@@ -128,7 +128,7 @@ var direction = {
     y: 1
 };
 
-var aiDifficulty = 0.04
+var aiDifficulty = 0.03;
 
 // Button Variables
 
