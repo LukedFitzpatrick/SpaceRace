@@ -35,7 +35,7 @@ var bgImage = new Image();
 bgImage.onload = function () {
     bgReady = true;
 };
-bgImage.src = "images/spacebg.png";
+bgImage.src = "images/background.png";
 
 // Player1 image
 var player1Ready = false;
@@ -85,6 +85,8 @@ var W_KEY = 87;
 var A_KEY = 65;
 var S_KEY = 83;
 var D_KEY = 68;
+
+var WALL_COMPENSATION = 5; //Allows the player to 'bounce' off the wall
 
 // Game objects
 var player1 = {
@@ -274,10 +276,10 @@ function targetCollision (player) {
 function verticalWallCollision (player) {
     if (player.x < 0) {
         player.x = 0;
-        player.xSpeed = -player.xSpeed;
+        player.xSpeed = -player.xSpeed + WALL_COMPENSATION; //Wall compensation adds the 'bounce' effect
     } else if (player.x > (canvas.width - player.image.width)) {
         player.x = (canvas.width - player.image.width);
-        player.xSpeed = -player.xSpeed;
+        player.xSpeed = -player.xSpeed - WALL_COMPENSATION;
     }
 }
 
@@ -286,10 +288,10 @@ function verticalWallCollision (player) {
 function horizontalWallCollision (player) {
     if (player.y < 0) {
         player.y = 0;
-        player.ySpeed = -player.ySpeed;
+        player.ySpeed = -player.ySpeed + WALL_COMPENSATION; //Wall compensation adds the 'bounce' effect
     } else if (player.y > (canvas.height - player.image.height)) {
         player.y = (canvas.height - player.image.height);
-        player.ySpeed = -player.ySpeed;
+        player.ySpeed = -player.ySpeed - WALL_COMPENSATION;
     }
 }
 
